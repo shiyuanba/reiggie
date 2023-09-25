@@ -59,7 +59,6 @@ public class EmployeeController {
 
     /**
      * 员工退出
-     *
      * @param request
      * @return
      */
@@ -69,10 +68,17 @@ public class EmployeeController {
         return R.success("退出成功");
     }
 
+    /**
+     * 添加员工
+     * @param request
+     * @param employee
+     * @return
+     */
     @PostMapping
     public R<String> save(HttpServletRequest request,@RequestBody Employee employee) {
         log.info("员工信息：{}", employee.toString());
-        //
+
+        //添加创建或更新时间
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
@@ -81,12 +87,11 @@ public class EmployeeController {
         Long empid = (Long) request.getSession().getAttribute("employee");
         employee.setCreateUser(empid);
         employee.setUpdateUser(empid);
-        //
-        boolean result = service.save(employee);
-        if (result){
-            return R.success("添加成功");
-        }
-        return R.error("添加失败");
+
+        //添加员工到数据库
+        service.save(employee);
+
+        return R.success("添加成功");
     }
 
 }
