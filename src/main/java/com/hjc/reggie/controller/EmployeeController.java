@@ -102,11 +102,16 @@ public class EmployeeController {
     @GetMapping("/page")
     public R<Page> page(int page,int pageSize,String name){
         log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
+        //构造分页构造器
         Page pageInfo = new Page(page,pageSize);
+        //构造条件构造器
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName,name);
         queryWrapper.orderByDesc(Employee::getUpdateTime);
+
+        //执行查询语句
         service.page(pageInfo,queryWrapper);
+
         return R.success(pageInfo);
     }
 }
