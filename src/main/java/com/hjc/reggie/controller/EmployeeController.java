@@ -13,6 +13,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
@@ -120,16 +121,27 @@ public class EmployeeController {
 
     /**
      * 根据员工id修改员工信息
-     *
      * @param employee
      * @return
      */
     @PutMapping
-    public R<String> update(HttpServletRequest request,@RequestBody Employee employee) {
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
         log.info(employee.toString());
         employee.setUpdateTime(LocalDateTime.now());
         employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
         service.updateById(employee);
         return R.success("员工信息修改成功");
+    }
+
+    /**
+     * 根据员工id查询员工信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable Long id){
+        log.info("根据员工id查询数据库...");
+        Employee employee = service.getById(id);
+        return R.success(employee);
     }
 }
