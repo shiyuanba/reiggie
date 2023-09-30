@@ -25,6 +25,7 @@ public class EmployeeController {
 
     /**
      * 员工登录
+     *
      * @param request
      * @param employee
      * @return
@@ -58,6 +59,7 @@ public class EmployeeController {
 
     /**
      * 员工退出
+     *
      * @param request
      * @return
      */
@@ -69,12 +71,13 @@ public class EmployeeController {
 
     /**
      * 添加员工
+     *
      * @param request
      * @param employee
      * @return
      */
     @PostMapping
-    public R<String> save(HttpServletRequest request,@RequestBody Employee employee) {
+    public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
         log.info("员工信息：{}", employee.toString());
 
         //添加创建或更新时间
@@ -93,25 +96,40 @@ public class EmployeeController {
     }
 
     /**
-     *员工信息分页查询
+     * 员工信息分页查询
+     *
      * @param page
      * @param pageSize
      * @param name
      * @return
      */
     @GetMapping("/page")
-    public R<Page> page(int page,int pageSize,String name){
-        log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
+    public R<Page> page(int page, int pageSize, String name) {
+        log.info("page = {},pageSize = {},name = {}", page, pageSize, name);
         //构造分页构造器
-        Page pageInfo = new Page(page,pageSize);
+        Page pageInfo = new Page(page, pageSize);
         //构造条件构造器
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName,name);
+        queryWrapper.like(StringUtils.isNotEmpty(name), Employee::getName, name);
         queryWrapper.orderByDesc(Employee::getUpdateTime);
 
         //执行查询语句
-        service.page(pageInfo,queryWrapper);
-
+        service.page(pageInfo, queryWrapper);
         return R.success(pageInfo);
+    }
+
+    /**
+     * 根据员工id修改员工信息
+     *
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public R<String> update(HttpServletRequest request,@RequestBody Employee employee) {
+        log.info(employee.toString());
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
+        service.updateById(employee);
+        return R.success("员工信息修改成功");
     }
 }
