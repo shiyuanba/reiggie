@@ -9,13 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -81,16 +77,15 @@ public class EmployeeController {
     public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
         log.info("员工信息：{}", employee.toString());
 
-        //添加创建或更新时间
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-
+        //添加创建或更新时间
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//
         //获得当前用户的id
-        Long empid = (Long) request.getSession().getAttribute("employee");
-        employee.setCreateUser(empid);
-        employee.setUpdateUser(empid);
-
+//        Long empid = (Long) request.getSession().getAttribute("employee");
+//        employee.setCreateUser(empid);
+//        employee.setUpdateUser(empid);
         //添加员工到数据库
         service.save(employee);
         return R.success("添加成功");
@@ -98,7 +93,6 @@ public class EmployeeController {
 
     /**
      * 员工信息分页查询
-     *
      * @param page
      * @param pageSize
      * @param name
@@ -127,8 +121,8 @@ public class EmployeeController {
     @PutMapping
     public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
         log.info(employee.toString());
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
         service.updateById(employee);
         return R.success("员工信息修改成功");
     }
