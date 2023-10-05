@@ -27,7 +27,6 @@ public class CommonController {
 
     /**
      * 文件上传
-     *
      * @param file
      * @return
      */
@@ -60,7 +59,6 @@ public class CommonController {
 
     /**
      * 文件下载
-     *
      * @param response
      * @param name
      */
