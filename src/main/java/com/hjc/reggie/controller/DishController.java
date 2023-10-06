@@ -39,7 +39,7 @@ public class DishController {
     public R<String> save(@RequestBody DishDto dishDto) {
         log.info(dishDto.toString());
         dishService.saveWithFlavor(dishDto);
-        return null;
+        return R.success("添加成功！");
     }
 
     /**
@@ -101,4 +101,10 @@ public class DishController {
         return R.success(dishDto);
     }
 
+    @PutMapping
+    public R<String> update(@RequestBody DishDto dishDto){
+        log.info(dishDto.toString());
+        dishService.updateWithFlavor(dishDto);
+        return R.success("修改成功！");
+    }
 }
