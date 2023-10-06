@@ -75,4 +75,16 @@ public class SetmealController {
 
         return R.success(setmealDtoPage);
     }
+
+    /**
+     * 根据id查询套餐信息和菜品信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<SetmealDto> update(@PathVariable Long id){
+        SetmealDto setmealDto = setmealService.getByIdWithDish(id);
+        return R.success(setmealDto);
+
+    }
 }

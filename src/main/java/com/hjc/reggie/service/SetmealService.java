@@ -10,4 +10,10 @@ public interface SetmealService extends IService<Setmeal> {
      * @param setmealDto
      */
     public void saveWithDish(SetmealDto setmealDto);
+
+    /**
+     * 根据id查询套餐信息和菜品信息
+     * @param id
+     */
+    public SetmealDto getByIdWithDish(Long id);
 }
