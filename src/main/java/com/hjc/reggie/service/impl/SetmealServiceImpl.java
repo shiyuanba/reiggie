@@ -2,6 +2,7 @@ package com.hjc.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hjc.reggie.common.CustomException;
 import com.hjc.reggie.dto.SetmealDto;
 import com.hjc.reggie.entity.Setmeal;
 import com.hjc.reggie.entity.SetmealDish;
@@ -51,10 +52,33 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         BeanUtils.copyProperties(setmeal, setmealDto);
 
         LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SetmealDish::getSetmealId,id);
+        queryWrapper.eq(SetmealDish::getSetmealId, id);
         queryWrapper.orderByAsc(SetmealDish::getSort);
         List<SetmealDish> list = setmealDishService.list(queryWrapper);
         setmealDto.setSetmealDishes(list);
         return setmealDto;
+    }
+
+    /**
+     * 删除套擦，同时删除套餐和菜品的关联数据
+     *
+     * @param ids
+     */
+    @Transactional
+    public void removeWithDish(List<Long> ids) {
+        //查询套餐状态
+        List<Setmeal> setmeals = this.listByIds(ids);
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Setmeal::getId, ids);
+        queryWrapper.eq(Setmeal::getStatus, 1);
+
+        if (this.count(queryWrapper) > 0) {
+            throw new CustomException("套餐正在售卖中... 不能删除");
+        }
+
+        this.removeByIds(ids);
+        LambdaQueryWrapper<SetmealDish> queryWrapper1 = new LambdaQueryWrapper<>();
+        queryWrapper1.in(SetmealDish::getSetmealId,ids);
+        setmealDishService.remove(queryWrapper1);
     }
 }
