@@ -6,6 +6,7 @@ import com.hjc.reggie.common.R;
 import com.hjc.reggie.dto.DishDto;
 import com.hjc.reggie.entity.Category;
 import com.hjc.reggie.entity.Dish;
+import com.hjc.reggie.entity.DishFlavor;
 import com.hjc.reggie.service.CategoryService;
 import com.hjc.reggie.service.DishFlavorService;
 import com.hjc.reggie.service.DishService;
@@ -114,18 +115,35 @@ public class DishController {
 
     /**
      * 根据条件查询对应的菜品数据
+     *
      * @param dish
      * @return
      */
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish) {
+    public R<List<DishDto>> list(Dish dish) {
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(dish.getCategoryId()!=null,Dish::getCategoryId, dish.getCategoryId());
+        queryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
 
         //查询为起售状态的菜品
-        queryWrapper.eq(Dish::getStatus,1);
+        queryWrapper.eq(Dish::getStatus, 1);
         queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+
         List<Dish> list = dishService.list(queryWrapper);
-        return R.success(list);
+        List<DishDto> dtoList = list.stream().map(item -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+
+            Long categoryId = item.getCategoryId();
+            Category category = categoryService.getById(categoryId);
+            if (category != null) {
+                dishDto.setCategoryName(category.getName());
+            }
+            Long id = item.getId();
+            LambdaQueryWrapper<DishFlavor> queryWrapper1 = new LambdaQueryWrapper<>();
+            queryWrapper1.eq(DishFlavor::getDishId, id);
+            dishDto.setFlavors(dishFlavorService.list(queryWrapper1));
+            return dishDto;
+        }).collect(Collectors.toList());
+        return R.success(dtoList);
     }
 }
