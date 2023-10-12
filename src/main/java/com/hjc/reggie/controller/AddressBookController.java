@@ -93,7 +93,7 @@ public class AddressBookController {
     public R<String> update(@RequestBody AddressBook addressBook){
 
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(addressBook!= null,AddressBook::getId,addressBook.getId());
+        queryWrapper.eq(addressBook!= null,AddressBook::getIsDefault,1);
         addressBookService.updateById(addressBook);
         return R.success("修改成功");
     }
@@ -107,5 +107,18 @@ public class AddressBookController {
     public R<String> delete(Long ids){
         addressBookService.removeById(ids);
         return R.success("删除成功");
+    }
+
+    /**
+     * 获取默认地址
+     * @return
+     */
+    @GetMapping("/default")
+    public R<AddressBook> getDefault(){
+        LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AddressBook::getIsDefault,1);
+        queryWrapper.eq(AddressBook::getUserId,BaseContext.getCurrentId());
+        AddressBook addressBook = addressBookService.getOne(queryWrapper);
+        return R.success(addressBook);
     }
 }
