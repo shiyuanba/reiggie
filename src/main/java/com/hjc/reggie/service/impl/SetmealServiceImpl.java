@@ -3,7 +3,9 @@ package com.hjc.reggie.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hjc.reggie.common.CustomException;
+import com.hjc.reggie.common.R;
 import com.hjc.reggie.dto.SetmealDto;
+import com.hjc.reggie.entity.Dish;
 import com.hjc.reggie.entity.Setmeal;
 import com.hjc.reggie.entity.SetmealDish;
 import com.hjc.reggie.mapper.SetmealMapper;
@@ -14,6 +16,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,4 +86,10 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         queryWrapper1.in(SetmealDish::getSetmealId,ids);
         setmealDishService.remove(queryWrapper1);
     }
+
+
+    public void setStatus(){
+
+    }
+
 }

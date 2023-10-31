@@ -124,7 +124,7 @@ public class EmployeeController {
 //        employee.setUpdateTime(LocalDateTime.now());
 //        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
         service.updateById(employee);
-        return R.success("员工信息修改成功");
+        return R.success("员工信息修改成功!");
     }
 
     /**
