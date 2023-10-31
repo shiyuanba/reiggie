@@ -32,11 +32,27 @@ public class OrderController {
     }
 
 
+    /**
+     * 订单信息分页查询
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize){
         Page<Orders> orderPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page,pageSize);
         orderService.page(orderPage);
 
         return R.success(orderPage);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @PutMapping
+    public R<String> setStatus(@RequestBody Orders order){
+        orderService.updateById(order);
+        return R.success("修改成功");
     }
 }
